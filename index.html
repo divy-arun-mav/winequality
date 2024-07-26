@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wine Quality Prediction</title>
+    <style>
+        .feature-input {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Wine Quality Prediction</h1>
+    <div>
+        <input type="text" id="fixed_acidity" class="feature-input" placeholder="Fixed Acidity">
+        <input type="text" id="volatile_acidity" class="feature-input" placeholder="Volatile Acidity">
+        <input type="text" id="citric_acid" class="feature-input" placeholder="Citric Acid">
+        <input type="text" id="residual_sugar" class="feature-input" placeholder="Residual Sugar">
+        <input type="text" id="chlorides" class="feature-input" placeholder="Chlorides">
+        <input type="text" id="free_sulfur_dioxide" class="feature-input" placeholder="Free Sulfur Dioxide">
+        <input type="text" id="total_sulfur_dioxide" class="feature-input" placeholder="Total Sulfur Dioxide">
+        <!-- New feature input field -->
+        <input type="text" id="density" class="feature-input" placeholder="Density">
+        <input type="text" id="ph" class="feature-input" placeholder="pH">
+        <input type="text" id="sulphates" class="feature-input" placeholder="Sulphates">
+        <input type="text" id="alcohol" class="feature-input" placeholder="Alcohol">
+    </div>
+    <button id="predict-btn">Predict</button>
+    <p id="result"></p>
+
+    <script>
+        const predictBtn = document.getElementById('predict-btn');
+        const result = document.getElementById('result');
+
+        const predict = async () => {
+            const fixed_acidity = parseFloat(document.getElementById('fixed_acidity').value);
+            const volatile_acidity = parseFloat(document.getElementById('volatile_acidity').value);
+            const citric_acid = parseFloat(document.getElementById('citric_acid').value);
+            const residual_sugar = parseFloat(document.getElementById('residual_sugar').value);
+            const chlorides = parseFloat(document.getElementById('chlorides').value);
+            const free_sulfur_dioxide = parseFloat(document.getElementById('free_sulfur_dioxide').value);
+            const total_sulfur_dioxide = parseFloat(document.getElementById('total_sulfur_dioxide').value); // New feature value
+            const density = parseFloat(document.getElementById('density').value);
+            const ph = parseFloat(document.getElementById('ph').value);
+            const sulphates = parseFloat(document.getElementById('sulphates').value);
+            const alcohol = parseFloat(document.getElementById('alcohol').value);
+
+            const features = [fixed_acidity, volatile_acidity, citric_acid, residual_sugar, chlorides, free_sulfur_dioxide, total_sulfur_dioxide, density, ph, sulphates, alcohol]; // Include new feature
+
+            try {
+                const res = await fetch('http://127.0.0.1:5000/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ features })
+                });
+
+                const data = await res.json();
+                if (res.status === 200) {
+                    result.textContent = `Prediction: ${data.prediction}`;
+                } else {
+                    result.textContent = 'Error occurred';
+                    console.error(data);
+                }
+            } catch (e) {
+                result.textContent = 'Error occurred';
+                console.error(e);
+            }
+        };
+
+        predictBtn.addEventListener('click', predict);
+    </script>
+</body>
+
+</html>
